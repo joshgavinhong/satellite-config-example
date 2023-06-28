@@ -16,4 +16,4 @@ apiVersion: v1
 metadata:
   name: satellite-config-sample
   labels:
-    name: satellite-config-sample
+    deploy.razee.io/mode: "EnsureExists"
