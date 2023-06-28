@@ -11,19 +11,19 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-# Build application
-FROM golang:alpine AS build-image
-RUN adduser -S sample -G root
-USER sample
-COPY /go/src /go/src
-RUN CGO_ENABLED=0 go build -o /go/bin/helloworld /go/src/helloworld.go
-RUN chmod 555 /go/bin/helloworld
-COPY --chown=sample --chmod=444 LICENSE /go/bin/
-RUN ls -l /go/bin/
-
-# Create minimal runtime image
-FROM scratch
-COPY --from=build-image /go/bin/ /
-EXPOSE 8080
-CMD ["/helloworld"]
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: helloworld-route
+  namespace: 3100024vy4-se-l3
+  labels:
+    razee/watch-resource: lite
+spec:
+  path: "/helloworld"
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: helloworld-svc
